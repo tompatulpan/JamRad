@@ -10,10 +10,10 @@ export default function Container({className, style, ...props}) {
   let [room] = use(state, ['room']);
   let width = useWidth();
   let belowSm = width < breakpoints.sm;
-  let border = belowSm ? '0px' : '2px solid lightgrey';
   const roomColors = colors(room);
   let backgroundColor = roomColors.background;
   let color = roomColors.text;
+  let border = belowSm ? '0px' : `2px solid ${color}`;
   return (
     <div
       className={mergeClasses('container b-0', className)}

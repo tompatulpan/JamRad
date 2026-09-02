@@ -7,6 +7,7 @@ import {openModal} from './Modal';
 import {InfoModal} from './InfoModal';
 import {MicOffSvg, MicOnSvg} from './Svg';
 import {useJam} from '../jam-core-react';
+import Panel from './Panel';
 
 const reactionEmojis = ['❤️', '💯', '😂', '😅', '😳', '🤔'];
 
@@ -90,65 +91,67 @@ export default function Navigation({
       {editSelf && <EditSelf onCancel={() => setEditSelf(false)} />}
       {/* Push-To-Talk console switch */}
       {/* TODO: button content breaks between icon and text on small screens. fix by using flexbox & text-overflow */}
-      <div className="flex">
-        <button
-          onClick={iSpeak ? talk : () => setProps('handRaised', !handRaised)}
-          onKeyUp={e => {
-            // don't allow clicking mute button with space bar to prevent confusion with push-to-talk w/ space bar
-            if (e.key === ' ') e.preventDefault();
-          }}
-          className="ptt-switch flex-grow select-none h-16 mt-4 px-6 text-lg font-mono uppercase tracking-wider rounded-lg focus:outline-none"
-          style={{
-            backgroundColor:
-              iSpeak && micOn && !micMuted
-                ? roomColors.buttonPrimary
-                : roomColors.background,
-            color:
-              iSpeak && micOn && !micMuted
-                ? roomColors.background
-                : roomColors.buttonPrimary,
-            border: `3px solid ${roomColors.buttonPrimary}`,
-            boxShadow:
-              iSpeak && micOn && !micMuted
-                ? `0 0 10px ${roomColors.buttonPrimary}, 0 0 22px ${roomColors.buttonPrimary}`
-                : 'none',
-            transition: 'background-color 100ms, box-shadow 100ms',
-          }}
-        >
-          {iSpeak && (
-            <>
-              {micOn && micMuted && (
-                <>
-                  <MicOffSvg
-                    className="w-5 h-5 mr-2 opacity-80 inline-block"
-                    stroke={roomColors.buttonPrimary}
-                  />
-                  ○&nbsp;OFF&nbsp;AIR&nbsp;—&nbsp;hold&nbsp;spacebar&nbsp;to&nbsp;transmit
-                </>
-              )}
-              {micOn && !micMuted && (
-                <>
-                  <MicOnSvg
-                    className="w-5 h-5 mr-2 opacity-80 inline-block"
-                    stroke={roomColors.background}
-                  />
-                  ◉&nbsp;ON&nbsp;AIR&nbsp;—&nbsp;transmitting
-                </>
-              )}
-              {!micOn && <>Allow&nbsp;microphone&nbsp;access</>}
-            </>
-          )}
-          {!iSpeak && (
-            <>
-              {handRaised ? (
-                <>Stop&nbsp;raising&nbsp;hand</>
-              ) : (
-                <>✋🏽&nbsp;Raise&nbsp;hand&nbsp;to&nbsp;transmit</>
-              )}
-            </>
-          )}
-        </button>
-      </div>
+      <Panel title="Operator Rig Control Panel">
+        <div className="flex">
+          <button
+            onClick={iSpeak ? talk : () => setProps('handRaised', !handRaised)}
+            onKeyUp={e => {
+              // don't allow clicking mute button with space bar to prevent confusion with push-to-talk w/ space bar
+              if (e.key === ' ') e.preventDefault();
+            }}
+            className="ptt-switch flex-grow select-none h-16 mt-4 px-6 text-lg font-mono uppercase tracking-wider rounded-lg focus:outline-none"
+            style={{
+              backgroundColor:
+                iSpeak && micOn && !micMuted
+                  ? roomColors.buttonPrimary
+                  : roomColors.background,
+              color:
+                iSpeak && micOn && !micMuted
+                  ? roomColors.background
+                  : roomColors.buttonPrimary,
+              border: `3px solid ${roomColors.buttonPrimary}`,
+              boxShadow:
+                iSpeak && micOn && !micMuted
+                  ? `0 0 10px ${roomColors.buttonPrimary}, 0 0 22px ${roomColors.buttonPrimary}`
+                  : 'none',
+              transition: 'background-color 100ms, box-shadow 100ms',
+            }}
+          >
+            {iSpeak && (
+              <>
+                {micOn && micMuted && (
+                  <>
+                    <MicOffSvg
+                      className="w-5 h-5 mr-2 opacity-80 inline-block"
+                      stroke={roomColors.buttonPrimary}
+                    />
+                    ○&nbsp;OFF&nbsp;AIR&nbsp;—&nbsp;hold&nbsp;spacebar&nbsp;to&nbsp;transmit
+                  </>
+                )}
+                {micOn && !micMuted && (
+                  <>
+                    <MicOnSvg
+                      className="w-5 h-5 mr-2 opacity-80 inline-block"
+                      stroke={roomColors.background}
+                    />
+                    ◉&nbsp;ON&nbsp;AIR&nbsp;—&nbsp;transmitting
+                  </>
+                )}
+                {!micOn && <>Allow&nbsp;microphone&nbsp;access</>}
+              </>
+            )}
+            {!iSpeak && (
+              <>
+                {handRaised ? (
+                  <>Stop&nbsp;raising&nbsp;hand</>
+                ) : (
+                  <>✋🏽&nbsp;Raise&nbsp;hand&nbsp;to&nbsp;transmit</>
+                )}
+              </>
+            )}
+          </button>
+        </div>
+      </Panel>
       <br />
       <div className="flex relative">
         <button

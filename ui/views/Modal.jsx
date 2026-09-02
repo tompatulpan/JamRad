@@ -2,6 +2,8 @@ import React from 'react';
 import {update, use} from 'use-minimal-state';
 import {useMemo} from '../lib/state-tree';
 import {useMediaQuery, useMqParser} from '../lib/tailwind-mqp';
+import {useJam} from '../jam-core-react/JamContext';
+import {colors} from '../lib/theme';
 
 const modals = [new Set()];
 
@@ -15,6 +17,9 @@ export default function Modals() {
 
 export function Modal({close, children}) {
   let mqp = useMqParser();
+  const [state] = useJam();
+  let room = use(state, 'room');
+  const roomColors = colors(room);
   return (
     <div
       className={mqp('p-0 sm:p-5 items-stretch sm:items-center')}
@@ -41,7 +46,9 @@ export function Modal({close, children}) {
           maxWidth: '100%',
           maxHeight: '100%',
           overflowY: 'hidden',
-          backgroundColor: 'white',
+          backgroundColor: roomColors.background,
+          color: roomColors.text,
+          border: `2px solid ${roomColors.text}`,
         }}
         onClick={e => {
           e.stopPropagation();

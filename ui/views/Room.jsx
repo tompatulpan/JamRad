@@ -13,6 +13,7 @@ import {userAgent} from '../lib/user-agent';
 import {colors} from '../lib/theme.js';
 import {usePushToTalk, useCtrlCombos} from '../lib/hotkeys';
 import {useJam} from '../jam-core-react';
+import Panel from './Panel';
 
 const inWebView =
   userAgent.browser?.name !== 'JamWebView' &&
@@ -196,7 +197,7 @@ export default function Room({room, roomId, uxConfig}) {
         {/* Main Area */}
         <div className="">
           {/* Stage */}
-          <div className="">
+          <Panel title="Transmitting Frequency — The Stage">
             <ol className="flex flex-wrap">
               {iSpeak && (
                 <StageAvatar
@@ -221,15 +222,12 @@ export default function Room({room, roomId, uxConfig}) {
                 />
               ))}
             </ol>
-          </div>
+          </Panel>
 
           <br />
           {/* Audience */}
           {!stageOnly && (
-            <>
-              <h3 className="pl-4 pb-4" style={{color: colors(room).textLight}}>
-                Monitoring
-              </h3>
+            <Panel title="Monitoring Cores — The Audience">
               <ol className="flex flex-wrap">
                 {!iSpeak && (
                   <AudienceAvatar
@@ -252,7 +250,14 @@ export default function Room({room, roomId, uxConfig}) {
                   />
                 ))}
               </ol>
-            </>
+              <div
+                className="pt-2 text-sm"
+                style={{color: colors(room).textLight}}
+              >
+                Total Monitors Listening: {audiencePeers.length + (!iSpeak ? 1 : 0)}{' '}
+                Operators
+              </div>
+            </Panel>
           )}
         </div>
 
