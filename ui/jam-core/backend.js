@@ -94,7 +94,8 @@ async function createRoom(
     description = '',
     logoURI = undefined,
     color = undefined,
-    stageOnly = false,
+    // JamRad: everyone joins the "stage" (as a transmitter) by default
+    stageOnly = true,
     videoCall = false,
   } = {}
 ) {

@@ -54,7 +54,7 @@ function JamUI({style, className, route = null, dynamicConfig = {}, ...props}) {
         return (
           <PossibleRoom
             roomId={route}
-            newRoom={dynamicConfig.room}
+            newRoom={{...defaultRoom, ...dynamicConfig.room}}
             autoCreate={!!dynamicConfig.ux?.autoCreate}
             roomIdentity={dynamicConfig.identity}
             roomIdentityKeys={dynamicConfig.keys}
@@ -63,7 +63,7 @@ function JamUI({style, className, route = null, dynamicConfig = {}, ...props}) {
               <Start
                 urlRoomId={route}
                 roomFromURIError={!!error.createRoom}
-                newRoom={dynamicConfig.room}
+                newRoom={{...defaultRoom, ...dynamicConfig.room}}
               />
             )}
           />
