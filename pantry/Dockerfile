@@ -1,5 +1,5 @@
 FROM node:alpine
-RUN corepack enable && corepack prepare yarn@1.22.19 --activate
+RUN npm install -g yarn
 ENV JAM_CONFIG_DIR=/jam-config
 RUN mkdir /pantry
 WORKDIR /pantry
