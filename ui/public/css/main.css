@@ -349,3 +349,13 @@
 .jam .human-radius {
   border-radius: 42%;
 }
+
+/* squarish avatar badge with name overlaid at the bottom, like a rig nameplate */
+.jam .jam-badge {
+  border-radius: 6px;
+  overflow: hidden;
+  display: block;
+}
+.jam .jam-badge img {
+  display: block;
+}
