@@ -209,7 +209,7 @@ const escapeHtmlReplacer = function (key, value) {
 
 const pantryApiPrefix = `${urls.pantry}/api/v1/rooms`;
 const defaultMetaInfo = {
-  ogTitle: 'Jam',
+  ogTitle: 'JamRad',
   ogDescription: 'Join this audio room',
   ogUrl: urls.jam,
   ogImage: `${urls.jam}/img/jam-app-icon.jpg`,

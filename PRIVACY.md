@@ -1,10 +1,10 @@
-Privacy Considerations for Jam
-==============================
+Privacy Considerations for JamRad
+==================================
 
 No Analytics
 ------------
 
-Jam does not use any analytics provider and we do not store IP addresses in the logs. Jam does not give any user data to third parties.
+JamRad does not use any analytics provider and we do not store IP addresses in the logs. JamRad does not give any user data to third parties.
 
 What is stored on the backend and why
 -------------------------------------
