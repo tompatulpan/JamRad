@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import {use} from 'use-minimal-state';
 import {useMqParser} from '../lib/tailwind-mqp';
 import Container from './Container';
 import {useJam} from '../jam-core-react';
@@ -10,12 +11,17 @@ const iOS =
 const macOS = /^Mac/.test(navigator.platform) && navigator.maxTouchPoints === 0;
 
 export default function StartFromURL({roomId, newRoom}) {
-  const [, {setProps, createRoom, autoJoinOnce}] = useJam();
+  const [state, {setProps, createRoom, autoJoinOnce, updateInfo}] = useJam();
   let mqp = useMqParser();
 
-  let submit = e => {
+  let myIdentity = use(state, 'myIdentity');
+  let [userName, setUserName] = useState(myIdentity?.info?.name ?? '');
+
+  let submit = async e => {
     e.preventDefault();
+    if (!userName.trim()) return;
     setProps('userInteracted', true);
+    await updateInfo({name: userName.trim()});
     autoJoinOnce(); // => enter room as soon as create room succeeded
     // (^ causes room to be entered in the same microtask where also room info updates;
     // if we await createRoom the microtask queue is already emptied)
@@ -32,9 +38,25 @@ export default function StartFromURL({roomId, newRoom}) {
           exist yet.
         </p>
 
+        <input
+          className="mb-5 rounded placeholder-gray-400 bg-gray-50 w-full md:w-96"
+          type="text"
+          placeholder="Your name"
+          value={userName}
+          name="jam-user-name"
+          autoComplete="off"
+          onChange={e => {
+            setUserName(e.target.value);
+          }}
+        ></input>
+        <div className="mb-5 p-2 text-gray-500 italic">
+          {`What's your name?`}
+        </div>
+
         <button
           onClick={submit}
-          className="select-none h-12 px-6 text-lg text-black bg-gray-200 rounded-lg focus:shadow-outline active:bg-gray-300"
+          disabled={!userName.trim()}
+          className="select-none h-12 px-6 text-lg text-black bg-gray-200 rounded-lg focus:shadow-outline active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           🌱 Start room
         </button>

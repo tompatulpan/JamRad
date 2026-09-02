@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {use} from 'use-minimal-state';
 import {useMqParser} from '../lib/tailwind-mqp';
 import Container from './Container';
@@ -23,10 +23,12 @@ export default function EnterRoom({
   buttonText,
   logoURI,
 }) {
-  const [state, {enterRoom, setProps}] = useJam();
+  const [state, {enterRoom, setProps, updateInfo}] = useJam();
   let mqp = useMqParser();
   let otherDevice = use(state, 'otherDeviceInRoom');
   let room = use(state, 'room');
+  let myIdentity = use(state, 'myIdentity');
+  let [userName, setUserName] = useState(myIdentity?.info?.name ?? '');
   const roomColors = colors(room);
   return (
     <Container>
@@ -80,15 +82,36 @@ export default function EnterRoom({
             but a decent baseline. we can add other rules (informal + formal)
             in the future
         */}
+        <input
+          className={
+            closed || forbidden
+              ? 'hidden'
+              : 'mt-5 rounded placeholder-gray-400 bg-gray-50 w-full md:w-96'
+          }
+          type="text"
+          placeholder="Your name"
+          value={userName}
+          name="jam-user-name"
+          autoComplete="off"
+          onChange={e => {
+            setUserName(e.target.value);
+          }}
+        ></input>
+        <div className={closed || forbidden ? 'hidden' : 'p-2 text-gray-500 italic'}>
+          {`What's your name?`}
+        </div>
         <button
-          onClick={() => {
+          disabled={!userName.trim()}
+          onClick={async () => {
+            if (!userName.trim()) return;
             setProps({userInteracted: true});
+            await updateInfo({name: userName.trim()});
             enterRoom(roomId);
           }}
           className={
             closed || forbidden
               ? 'hidden'
-              : 'mt-5 select-none w-full h-12 px-6 text-lg text-white bg-gray-600 rounded-lg focus:shadow-outline active:bg-gray-600'
+              : 'mt-5 select-none w-full h-12 px-6 text-lg text-white bg-gray-600 rounded-lg focus:shadow-outline active:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed'
           }
           style={{
             backgroundColor: roomColors.buttonPrimary,

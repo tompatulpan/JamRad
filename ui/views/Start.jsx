@@ -1,5 +1,6 @@
 import React, {useState, useMemo} from 'react';
 import slugify from 'slugify';
+import {use} from 'use-minimal-state';
 
 import {navigate} from '../lib/use-location';
 import Container from './Container';
@@ -7,7 +8,10 @@ import {useJam} from '../jam-core-react';
 import {colors} from '../lib/theme';
 
 export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
-  const [, {enterRoom, setProps, createRoom}] = useJam();
+  const [state, {enterRoom, setProps, createRoom, updateInfo}] = useJam();
+
+  let myIdentity = use(state, 'myIdentity');
+  let [userName, setUserName] = useState(myIdentity?.info?.name ?? '');
 
   // note: setters are currently unused because form is hidden
   let [name, setName] = useState(newRoom.name ?? '');
@@ -23,6 +27,7 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
 
   let submit = e => {
     e.preventDefault();
+    if (!userName.trim()) return;
     setProps('userInteracted', true);
     let roomId;
     if (name) {
@@ -34,6 +39,7 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
 
     (async () => {
       let roomPosted = {name, description, logoURI, color, stageOnly};
+      await updateInfo({name: userName.trim()});
       let ok = await createRoom(roomId, roomPosted);
       if (ok) {
         if (urlRoomId !== roomId) navigate('/' + roomId);
@@ -80,6 +86,21 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
         <p>Click on the button below to start a room.</p>
 
         <form className="pt-6" onSubmit={submit}>
+          <input
+            className="rounded placeholder-gray-400 bg-gray-50 w-full md:w-96"
+            type="text"
+            placeholder="Your name"
+            value={userName}
+            name="jam-user-name"
+            autoComplete="off"
+            onChange={e => {
+              setUserName(e.target.value);
+            }}
+          ></input>
+          <div className="p-2 text-gray-500 italic">
+            {`What's your name?`}
+          </div>
+          <br />
           <div className="hidden">
             <input
               className="rounded placeholder-gray-400 bg-gray-50 w-full md:w-96"
@@ -215,7 +236,8 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
 
           <button
             onClick={submit}
-            className="select-none h-12 px-6 text-lg text-black rounded-lg focus:shadow-outline"
+            disabled={!userName.trim()}
+            className="select-none h-12 px-6 text-lg text-black rounded-lg focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
             style={{backgroundColor: roomColors.buttonSecondary}}
           >
             🌱 Start room
@@ -226,15 +248,13 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
 
         {!window.jamConfig.hideJamInfo && (
           <div>
-            <h1>Welcome to Jam</h1>
+            <h1>Welcome to JamRad</h1>
 
             <div className="flex flex-row pt-4 pb-4">
               <div className="flex-1 pt-6">
-                Jam is an <span className="italic">audio&nbsp;space</span>
-                <br />
-                for chatting, brainstorming, debating, jamming,
-                <br />
-                micro-conferences and more.
+                JamRad is an <span className="italic">audio&nbsp;space</span>
+                for chatting, brainstorming, discussing, ...
+                
                 <br />
                 <br />
                 <a
@@ -248,32 +268,9 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
                 </a>
                 <br />
                 <br />
-                <br />
-                Jam <b className="font-semibold">Pro</b> (Early Access): Make
-                Jam your own.
-                <br />
-                Set your own colors and logo, use your own domain.
-                <br />
-                <br />
-                <a
-                  href="https://pro.jam.systems"
-                  className="underline"
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{color: roomColors.link}}
-                >
-                  Sign up for the Jam Pro Early Access Program.
-                </a>
+
               </div>
-              <div className="flex-initial">
-                <img
-                  className="mt-8 md:mt-4 md:mb-4 md:mr-8"
-                  style={{width: 130, height: 130}}
-                  alt="Jam mascot by @eejitlikeme"
-                  title="Jam mascot by @eejitlikeme"
-                  src="/img/jam.jpg"
-                />
-              </div>
+
             </div>
           </div>
         )}
