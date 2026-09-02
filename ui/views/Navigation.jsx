@@ -88,7 +88,7 @@ export default function Navigation({
         />
       )}
       {editSelf && <EditSelf onCancel={() => setEditSelf(false)} />}
-      {/* microphone mute/unmute button */}
+      {/* Push-To-Talk console switch */}
       {/* TODO: button content breaks between icon and text on small screens. fix by using flexbox & text-overflow */}
       <div className="flex">
         <button
@@ -97,10 +97,22 @@ export default function Navigation({
             // don't allow clicking mute button with space bar to prevent confusion with push-to-talk w/ space bar
             if (e.key === ' ') e.preventDefault();
           }}
-          className="flex-grow select-none h-12 mt-4 px-6 text-lg text-white bg-gray-600 rounded-lg focus:outline-none active:bg-gray-600"
+          className="ptt-switch flex-grow select-none h-16 mt-4 px-6 text-lg font-mono uppercase tracking-wider rounded-lg focus:outline-none"
           style={{
-            backgroundColor: roomColors.buttonPrimary,
-            color: isColorDark ? 'white' : 'black',
+            backgroundColor:
+              iSpeak && micOn && !micMuted
+                ? roomColors.buttonPrimary
+                : roomColors.background,
+            color:
+              iSpeak && micOn && !micMuted
+                ? roomColors.background
+                : roomColors.buttonPrimary,
+            border: `3px solid ${roomColors.buttonPrimary}`,
+            boxShadow:
+              iSpeak && micOn && !micMuted
+                ? `0 0 10px ${roomColors.buttonPrimary}, 0 0 22px ${roomColors.buttonPrimary}`
+                : 'none',
+            transition: 'background-color 100ms, box-shadow 100ms',
           }}
         >
           {iSpeak && (
@@ -111,16 +123,16 @@ export default function Navigation({
                     className="w-5 h-5 mr-2 opacity-80 inline-block"
                     stroke={roomColors.buttonPrimary}
                   />
-                  Your&nbsp;microphone&nbsp;is&nbsp;off
+                  ○&nbsp;OFF&nbsp;AIR&nbsp;—&nbsp;hold&nbsp;spacebar&nbsp;to&nbsp;transmit
                 </>
               )}
               {micOn && !micMuted && (
                 <>
                   <MicOnSvg
                     className="w-5 h-5 mr-2 opacity-80 inline-block"
-                    stroke={roomColors.buttonPrimary}
+                    stroke={roomColors.background}
                   />
-                  Your&nbsp;microphone&nbsp;is&nbsp;on
+                  ◉&nbsp;ON&nbsp;AIR&nbsp;—&nbsp;transmitting
                 </>
               )}
               {!micOn && <>Allow&nbsp;microphone&nbsp;access</>}

@@ -5,7 +5,8 @@ export {StateType, IdentityInfo, IdentityType, RoomType, ActionType, Props};
 const defaultProps = {
   roomId: null as string | null,
   userInteracted: false,
-  micMuted: false,
+  // JamRad: always start "off air" (muted) — push-to-talk to transmit
+  micMuted: true,
   handRaised: false,
   autoJoin: false,
   hasMediasoup: false,

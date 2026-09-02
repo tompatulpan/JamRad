@@ -16,7 +16,8 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
   let [logoURI, setLogoURI] = useState(newRoom.logoURI ?? '');
   let [buttonText, setButtonText] = useState(newRoom.buttonText ?? '');
   let [buttonURI, setButtonURI] = useState(newRoom.buttonURI ?? '');
-  let {stageOnly = false} = newRoom;
+  // JamRad: everyone joins the "stage" (as a transmitter) by default
+  let {stageOnly = true} = newRoom;
 
   let [showAdvanced, setShowAdvanced] = useState(false);
 

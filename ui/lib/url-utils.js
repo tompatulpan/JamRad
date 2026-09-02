@@ -7,7 +7,8 @@ function parsePath(pathname) {
   let stageOnly = first === 's';
   // other special configs go here
   let route = stageOnly ? second : first;
-  let room = {stageOnly};
+  // JamRad: every room defaults to "everyone on stage" (transmitter), regardless of URL prefix
+  let room = {stageOnly: true};
   return {route, room};
 }
 
