@@ -1,6 +1,27 @@
 import {useEffect} from 'react';
 import {useJam} from '../jam-core-react/JamContext';
 
+// short 'roger beep' tone burst played when releasing push-to-talk
+function playRogerBeep() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new Ctx();
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 800;
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.15);
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.15);
+    oscillator.onended = () => ctx.close();
+  } catch (e) {
+    // ignore if WebAudio unavailable
+  }
+}
+
 // unmute on space bar if currently muted
 export function usePushToTalk() {
   const [state, {setProps}] = useJam();
@@ -33,6 +54,7 @@ export function usePushToTalk() {
         event.stopPropagation();
         event.preventDefault();
         setProps('micMuted', true);
+        playRogerBeep();
       }
     };
     document.addEventListener('keydown', unmuteOnSpaceDown);

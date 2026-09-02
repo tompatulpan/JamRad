@@ -12,7 +12,7 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
   // note: setters are currently unused because form is hidden
   let [name, setName] = useState(newRoom.name ?? '');
   let [description, setDescription] = useState(newRoom.description ?? '');
-  let [color, setColor] = useState(newRoom.color ?? '#4B5563');
+  let [color, setColor] = useState(newRoom.color ?? '#39ff14');
   let [logoURI, setLogoURI] = useState(newRoom.logoURI ?? '');
   let [buttonText, setButtonText] = useState(newRoom.buttonText ?? '');
   let [buttonURI, setButtonURI] = useState(newRoom.buttonURI ?? '');

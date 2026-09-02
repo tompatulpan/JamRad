@@ -70,14 +70,14 @@ export default function EditRole({
             onClick={() => removeSpeaker(roomId, peerId).then(onCancel)}
             className="mb-2 h-12 px-6 text-lg text-black bg-gray-200 rounded-lg focus:shadow-outline active:bg-gray-300 mr-2"
           >
-            ↓ Move to Audience
+            ↓ Move to Monitoring
           </button>
         ) : (
           <button
             onClick={() => addSpeaker(roomId, peerId).then(onCancel)}
             className="mb-2 h-12 px-6 text-lg text-black bg-gray-200 rounded-lg focus:shadow-outline active:bg-gray-300 mr-2"
           >
-            ↑ Invite to Stage
+            ↑ Invite to Transmit
           </button>
         ))}
       {isSpeaker && !isModerator && (
@@ -162,14 +162,14 @@ export function EditSelf({onCancel}) {
           <SecondaryButton
             onClick={() => addSpeaker(roomId, myId).then(onCancel)}
           >
-            ↑ Move to Stage
+            ↑ Move to Transmit
           </SecondaryButton>
         )}
         {!stageOnly && iModerate && iSpeak && (
           <SecondaryButton
             onClick={() => removeSpeaker(roomId, myId).then(onCancel)}
           >
-            ↓ Leave Stage
+            ↓ Stop Transmitting
           </SecondaryButton>
         )}
         {!stageOnly && !iModerate && iSpeak && (
@@ -179,7 +179,7 @@ export function EditSelf({onCancel}) {
               onCancel();
             }}
           >
-            ↓ Leave Stage
+            ↓ Stop Transmitting
           </SecondaryButton>
         )}
         {iSpeak && (

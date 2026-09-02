@@ -228,7 +228,7 @@ export default function Room({room, roomId, uxConfig}) {
           {!stageOnly && (
             <>
               <h3 className="pl-4 pb-4" style={{color: colors(room).textLight}}>
-                Audience
+                Monitoring
               </h3>
               <ol className="flex flex-wrap">
                 {!iSpeak && (

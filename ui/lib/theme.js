@@ -2,20 +2,21 @@ import color from 'color';
 
 export {colors};
 
+// SDR/CRT console theme: black background, matrix-green accents
 const defaultColors = {
-  background: 'white',
-  header: 'black',
-  text: '#4b5563',
-  link: '#60a5fa',
-  buttonPrimary: '#4B5563',
-  buttonSecondary: '#e5e7eb',
+  background: '#0a0f0a',
+  header: '#39ff14',
+  text: '#39ff14',
+  link: '#7CFC93',
+  buttonPrimary: '#39ff14',
+  buttonSecondary: '#123312',
 };
 
 const colors = room => {
   const currentColors = {
     ...defaultColors,
     ...room.theme?.colors,
-    buttonPrimary: room.color,
+    buttonPrimary: room.color || defaultColors.buttonPrimary,
   };
 
   return {
