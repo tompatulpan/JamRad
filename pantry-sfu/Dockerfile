@@ -1,5 +1,4 @@
 FROM node:22-alpine
-RUN npm install -g yarn
 RUN apk add --no-cache linux-headers make python3 py3-pip g++
 ENV JAM_CONFIG_DIR=/jam-config
 RUN mkdir /pantry-sfu
