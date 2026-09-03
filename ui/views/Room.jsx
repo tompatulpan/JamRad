@@ -197,7 +197,7 @@ export default function Room({room, roomId, uxConfig}) {
         {/* Main Area */}
         <div className="">
           {/* Stage */}
-          <Panel title="Transmitting Frequency — The Stage">
+          <Panel title="ON AIR">
             <ol className="flex flex-wrap">
               {iSpeak && (
                 <StageAvatar
