@@ -125,7 +125,7 @@ export default function Navigation({
                       className="w-5 h-5 mr-2 opacity-80 inline-block"
                       stroke={roomColors.buttonPrimary}
                     />
-                    ○&nbsp;PTT&nbsp;—&nbsp;hold&nbsp;spacebar&nbsp;to&nbsp;transmit
+                    ○&nbsp;PTT&nbsp;—&nbsp;hold&nbsp;spacebar&nbsp;to&nbsp;talk
                   </>
                 )}
                 {micOn && !micMuted && (
@@ -145,7 +145,7 @@ export default function Navigation({
                 {handRaised ? (
                   <>Stop&nbsp;raising&nbsp;hand</>
                 ) : (
-                  <>✋🏽&nbsp;Raise&nbsp;hand&nbsp;to&nbsp;transmit</>
+                  <>✋🏽&nbsp;Raise&nbsp;hand&nbsp;to&nbsp;talk</>
                 )}
               </>
             )}

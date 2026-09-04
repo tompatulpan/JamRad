@@ -9,7 +9,7 @@ const defaultColors = {
   text: '#39ff14',
   link: '#7CFC93',
   buttonPrimary: '#39ff14',
-  buttonSecondary: '#123312',
+  buttonSecondary: '#1f6b1f',
 };
 
 const colors = room => {

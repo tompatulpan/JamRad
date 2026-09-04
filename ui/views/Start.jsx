@@ -252,19 +252,17 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
 
             <div className="flex flex-row pt-4 pb-4">
               <div className="flex-1 pt-6">
-                JamRad is an <span className="italic">audio&nbsp;space</span>
-                for chatting, brainstorming, discussing, ...
+                JamRad is an <span className="italic">audio&nbsp;space</span> for chatting, brainstorming, discussing, ... Its a modified version of Jam, a web-based audio chat platform. 
                 
                 <br />
-                <br />
                 <a
-                  href="https://gitlab.com/jam-systems/jam"
+                  href="https://github.com/tompatulpan/JamRad"
                   className="underline"
                   target="_blank"
                   rel="noreferrer"
                   style={{color: roomColors.link}}
                 >
-                  Learn&nbsp;more&nbsp;about&nbsp;Jam.
+                  Learn&nbsp;more&nbsp;about&nbsp;JamRad
                 </a>
                 <br />
                 <br />
@@ -281,28 +279,8 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
             target="_blank"
             rel="noreferrer"
           >
-            built
-          </a>{' '}
-          w/ ♥ by{' '}
-          {humins.map((humin, idx) => (
-            <span key={idx}>
-              {' '}
-              <a
-                href={'https://twitter.com/' + humin}
-                target="_blank"
-                rel="noreferrer"
-              >
-                @{humin}
-              </a>
-            </span>
-          ))}{' '}
-          in Berlin &amp; Vienna,{' '}
-          <a
-            href="https://www.digitalocean.com"
-            target="_blank"
-            rel="noreferrer"
-          >
-            hosted in Frankfurt
+
+
           </a>
         </div>
       </div>
