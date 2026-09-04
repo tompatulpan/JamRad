@@ -224,7 +224,7 @@ export default function Navigation({
             onClick={() => leaveRoom(roomId)}
             style={{backgroundColor: roomColors.buttonSecondary}}
           >
-            🖖🏽&nbsp;Leave
+            Leave
           </button>
         )}
       </div>

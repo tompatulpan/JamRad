@@ -1,16 +1,6 @@
 {
   "defaultRoom": {
     "color": "#FFC400",
-    "stageOnly": true,
-    "theme": {
-      "colors": {
-        "background": "black",
-        "text": "#FFC400",
-        "header": "#FFC400",
-        "link": "#FFC400",
-        "buttonPrimary": "#FFC400",
-        "buttonSecondary": "#FFC400"
-      }
-    }
+    "stageOnly": true
   }
 }

@@ -123,5 +123,7 @@ async function updateRoom(state, roomId, room) {
   // don't accept updates that delete the moderator/speaker array
   // (=> explicitly set to [] if that is the intention)
   if (!room?.moderators || !room?.speakers) return false;
-  return await put(state, `/rooms/${roomId}`, room);
+  let ok = await put(state, `/rooms/${roomId}`, room);
+  if (ok) populateCache(API + `/rooms/${roomId}`, room);
+  return ok;
 }

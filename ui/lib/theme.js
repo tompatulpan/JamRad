@@ -13,10 +13,21 @@ const defaultColors = {
 };
 
 const colors = room => {
+  const primary = room.color || defaultColors.buttonPrimary;
+  const derivedFromRoomColor = room.color
+    ? {
+        buttonPrimary: primary,
+        buttonSecondary: color(primary).darken(0.5).hex(),
+        header: primary,
+        text: primary,
+        link: color(primary).lighten(0.3).hex(),
+      }
+    : {};
+
   const currentColors = {
     ...defaultColors,
+    ...derivedFromRoomColor,
     ...room.theme?.colors,
-    buttonPrimary: room.color || defaultColors.buttonPrimary,
   };
 
   return {
