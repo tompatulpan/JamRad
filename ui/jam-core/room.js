@@ -30,7 +30,11 @@ function RoomState({roomId, myIdentity, peerState, myPeerState}) {
   room = useStableObject({...room, speakers});
 
   let iAmModerator = moderators.includes(myId);
-  let iAmSpeaker = !!stageOnly || speakers.includes(myId);
+  // JamRad: stageOnly no longer forces everyone to be a speaker -- it only
+  // controls the *default* role for new joiners (see Speakers.js). The
+  // speakers[] list is the real source of truth so moderators can remove
+  // individual peers from stage.
+  let iAmSpeaker = speakers.includes(myId);
   let iAmPresenter = !!videoCall || presenters.includes(myId);
   let iAmAuthorized =
     !accessRestricted || room.access?.identities.includes(myId);

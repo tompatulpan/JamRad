@@ -28,7 +28,7 @@ export default function EditRole({
   let [myAdminStatus] = useApiQuery(`/admin/${myId}`, {fetchOnMount: true});
   let [peerAdminStatus] = useApiQuery(`/admin/${peerId}`, {fetchOnMount: true});
 
-  let isSpeaker = stageOnly || speakers.includes(peerId);
+  let isSpeaker = speakers.includes(peerId);
   let isModerator = moderators.includes(peerId);
 
   return (
@@ -64,22 +64,21 @@ export default function EditRole({
       )}
       <h3 className="font-medium">Moderator Actions</h3>
       <br />
-      {!stageOnly &&
-        (isSpeaker ? (
-          <button
-            onClick={() => removeSpeaker(roomId, peerId).then(onCancel)}
-            className="mb-2 h-12 px-6 text-lg text-black bg-gray-200 rounded-lg focus:shadow-outline active:bg-gray-300 mr-2"
-          >
-            ↓ Move to Monitoring
-          </button>
-        ) : (
-          <button
-            onClick={() => addSpeaker(roomId, peerId).then(onCancel)}
-            className="mb-2 h-12 px-6 text-lg text-black bg-gray-200 rounded-lg focus:shadow-outline active:bg-gray-300 mr-2"
-          >
-            ↑ Invite to Transmit
-          </button>
-        ))}
+      {isSpeaker ? (
+        <button
+          onClick={() => removeSpeaker(roomId, peerId).then(onCancel)}
+          className="mb-2 h-12 px-6 text-lg text-black bg-gray-200 rounded-lg focus:shadow-outline active:bg-gray-300 mr-2"
+        >
+          ↓ Move to Monitoring
+        </button>
+      ) : (
+        <button
+          onClick={() => addSpeaker(roomId, peerId).then(onCancel)}
+          className="mb-2 h-12 px-6 text-lg text-black bg-gray-200 rounded-lg focus:shadow-outline active:bg-gray-300 mr-2"
+        >
+          ↑ Invite to Transmit
+        </button>
+      )}
       {isSpeaker && !isModerator && (
         <button
           onClick={() => addModerator(roomId, peerId).then(onCancel)}
@@ -141,8 +140,6 @@ export function EditSelf({onCancel}) {
     'isRecording',
     'isPodcasting',
   ]);
-  let stageOnly = !!room?.stageOnly;
-  iSpeak = stageOnly || iSpeak;
   return (
     <div className={mqp('md:p-10')}>
       <h3 className="font-medium">Actions</h3>
@@ -158,21 +155,21 @@ export function EditSelf({onCancel}) {
             Edit Profile
           </SecondaryButton>
         )}
-        {!stageOnly && iModerate && !iSpeak && (
+        {iModerate && !iSpeak && (
           <SecondaryButton
             onClick={() => addSpeaker(roomId, myId).then(onCancel)}
           >
             ↑ Move to Transmit
           </SecondaryButton>
         )}
-        {!stageOnly && iModerate && iSpeak && (
+        {iModerate && iSpeak && (
           <SecondaryButton
             onClick={() => removeSpeaker(roomId, myId).then(onCancel)}
           >
             ↓ Stop Transmitting
           </SecondaryButton>
         )}
-        {!stageOnly && !iModerate && iSpeak && (
+        {!iModerate && iSpeak && (
           <SecondaryButton
             onClick={() => {
               leaveStage();

@@ -7,8 +7,11 @@ function parsePath(pathname) {
   let stageOnly = first === 's';
   // other special configs go here
   let route = stageOnly ? second : first;
-  // JamRad: every room defaults to "everyone on stage" (transmitter), regardless of URL prefix
-  let room = {stageOnly: true};
+  // JamRad: only force stageOnly via the URL's explicit "/s/" prefix here.
+  // The default for rooms reached without that prefix comes from the single
+  // source of truth: jam-config.json's `defaultRoom.stageOnly` (see
+  // Jam.jsx, which spreads `defaultRoom` before `dynamicConfig.room`).
+  let room = stageOnly ? {stageOnly: true} : {};
   return {route, room};
 }
 

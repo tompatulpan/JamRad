@@ -7,7 +7,7 @@ export default function WebRtcConnections({swarm, hasMediasoup}) {
   return function WebRtcConnections({roomState}) {
     let {
       iAmSpeaker,
-      room: {speakers, stageOnly},
+      room: {speakers},
     } = roomState;
     let peers = use(swarm, 'peers');
 
@@ -28,7 +28,7 @@ export default function WebRtcConnections({swarm, hasMediasoup}) {
     for (let connection of allConnections) {
       // if mediasoup is used, only speakers should connect with each other
       // otherwise, speakers should connect with everyone and audience only with speakers
-      let theyAreSpeaker = stageOnly || speakers.includes(connection.peerId);
+      let theyAreSpeaker = speakers.includes(connection.peerId);
       let shouldConnect = hasMediasoup
         ? iAmSpeaker && theyAreSpeaker
         : iAmSpeaker || theyAreSpeaker;

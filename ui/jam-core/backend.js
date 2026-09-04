@@ -94,8 +94,9 @@ async function createRoom(
     description = '',
     logoURI = undefined,
     color = undefined,
-    // JamRad: everyone joins the "stage" (as a transmitter) by default
-    stageOnly = true,
+    // JamRad: default sourced from jam-config.json's defaultRoom.stageOnly
+    // (single source of truth), falling back to false (stock Jam behavior)
+    stageOnly = staticConfig.defaultRoom?.stageOnly ?? false,
     videoCall = false,
   } = {}
 ) {

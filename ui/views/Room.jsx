@@ -112,12 +112,14 @@ export default function Room({room, roomId, uxConfig}) {
   }
 
   let myPeerId = myInfo.id;
-  let stagePeers = stageOnly
-    ? peers
-    : (speakers ?? []).filter(id => peers.includes(id));
-  let audiencePeers = stageOnly
-    ? []
-    : peers.filter(id => !stagePeers.includes(id));
+  // JamRad: speakers[] is the real source of truth for who is on stage,
+  // even in stageOnly rooms (the moderator auto-promotes joiners to
+  // speaker -- see jam-core/room/Speakers.js). Previously this used
+  // `stageOnly ? peers : ...` which showed everyone as "on stage" in the
+  // UI regardless of the actual speakers[] list, causing the stage view to
+  // disagree with iAmSpeaker/raise-hand state.
+  let stagePeers = (speakers ?? []).filter(id => peers.includes(id));
+  let audiencePeers = peers.filter(id => !stagePeers.includes(id));
 
   let {noLeave} = uxConfig;
 
@@ -226,39 +228,41 @@ export default function Room({room, roomId, uxConfig}) {
 
           <br />
           {/* Audience */}
-          {!stageOnly && (
-            <Panel title="Monitoring Cores — The Audience">
-              <ol className="flex flex-wrap">
-                {!iSpeak && (
-                  <AudienceAvatar
-                    {...{reactions, room}}
-                    peerId={myPeerId}
-                    peerState={myPeerState}
-                    info={myInfo}
-                    handRaised={handRaised}
-                    onClick={() => setEditSelf(true)}
-                  />
-                )}
-                {audiencePeers.map(peerId => (
-                  <AudienceAvatar
-                    key={peerId}
-                    {...{peerId, peerState, reactions, room}}
-                    peerState={peerState[peerId]}
-                    info={identities[peerId]}
-                    handRaised={iModerate && peerState[peerId]?.handRaised}
-                    onClick={iModerate ? () => setEditRole(peerId) : undefined}
-                  />
-                ))}
-              </ol>
-              <div
-                className="pt-2 text-sm"
-                style={{color: colors(room).textLight}}
-              >
-                Total Monitors Listening: {audiencePeers.length + (!iSpeak ? 1 : 0)}{' '}
-                Operators
-              </div>
-            </Panel>
-          )}
+          {/* JamRad: always render the audience panel -- speakers[] is the
+              real source of truth for stage membership even in stageOnly
+              rooms, so a peer removed from stage by a moderator needs
+              somewhere to show up instead of disappearing entirely. */}
+          <Panel title="OFF AIR - JUST RECEIVING">
+            <ol className="flex flex-wrap">
+              {!iSpeak && (
+                <AudienceAvatar
+                  {...{reactions, room}}
+                  peerId={myPeerId}
+                  peerState={myPeerState}
+                  info={myInfo}
+                  handRaised={handRaised}
+                  onClick={() => setEditSelf(true)}
+                />
+              )}
+              {audiencePeers.map(peerId => (
+                <AudienceAvatar
+                  key={peerId}
+                  {...{peerId, peerState, reactions, room}}
+                  peerState={peerState[peerId]}
+                  info={identities[peerId]}
+                  handRaised={iModerate && peerState[peerId]?.handRaised}
+                  onClick={iModerate ? () => setEditRole(peerId) : undefined}
+                />
+              ))}
+            </ol>
+            <div
+              className="pt-2 text-sm"
+              style={{color: colors(room).textLight}}
+            >
+              Total Monitors Listening: {audiencePeers.length + (!iSpeak ? 1 : 0)}{' '}
+              Operators
+            </div>
+          </Panel>
         </div>
 
         <div style={{height: '136px', flex: 'none'}} />

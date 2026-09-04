@@ -6,6 +6,7 @@ import {navigate} from '../lib/use-location';
 import Container from './Container';
 import {useJam} from '../jam-core-react';
 import {colors} from '../lib/theme';
+import {staticConfig} from '../jam-core/config';
 
 export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
   const [state, {enterRoom, setProps, createRoom, updateInfo}] = useJam();
@@ -20,8 +21,9 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
   let [logoURI, setLogoURI] = useState(newRoom.logoURI ?? '');
   let [buttonText, setButtonText] = useState(newRoom.buttonText ?? '');
   let [buttonURI, setButtonURI] = useState(newRoom.buttonURI ?? '');
-  // JamRad: everyone joins the "stage" (as a transmitter) by default
-  let {stageOnly = true} = newRoom;
+  // JamRad: everyone joins the "stage" (as a transmitter) by default; single
+  // source of truth for the default is jam-config.json's defaultRoom.stageOnly
+  let {stageOnly = staticConfig.defaultRoom?.stageOnly ?? false} = newRoom;
 
   let [showAdvanced, setShowAdvanced] = useState(false);
 

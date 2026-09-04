@@ -12,6 +12,9 @@ export {addSpeaker, removeSpeaker};
 export default function Speakers() {
   const leftStageRooms = StoredState('jam.leftStageRooms', () => ({}));
   const leftStageMap = new Map(); // roomId => Set(peerId)
+  // JamRad: peers we (as moderator) already requested auto-add-to-speakers
+  // for, so we don't spam the API on every render. roomId => Set(peerId)
+  const moderatorAutoAddedMap = new Map();
 
   return function Speakers({
     roomId,
@@ -24,14 +27,18 @@ export default function Speakers() {
     let leftStagePeers =
       leftStageMap.get(roomId) ??
       leftStageMap.set(roomId, new Set()).get(roomId);
+    let moderatorAutoAdded =
+      moderatorAutoAddedMap.get(roomId) ??
+      moderatorAutoAddedMap.set(roomId, new Set()).get(roomId);
 
-    let {speakers, stageOnly} = room;
+    let {speakers, stageOnly, moderators = []} = room;
     let myId = myIdentity.publicKey;
+    let iAmModerator = moderators.includes(myId);
 
     // did I leave stage? (from localStorage / gets overridden when we are put back on stage while in the room)
     let [isLeaveStage] = useAction(actions.LEAVE_STAGE);
     let justGotRoom = useDidChange(hasRoom) && hasRoom;
-    let iAmServerSpeaker = !!stageOnly || speakers.includes(myId);
+    let iAmServerSpeaker = speakers.includes(myId);
     let iBecameSpeaker =
       useDidChange(iAmServerSpeaker) && iAmServerSpeaker && !justGotRoom;
     if (iBecameSpeaker) {
@@ -45,6 +52,24 @@ export default function Speakers() {
     let leftStage = !!leftStageRooms[roomId];
     is(myPeerState, {leftStage}); // announce to peers
 
+    // JamRad: stageOnly rooms default new joiners to speaker. Only the
+    // moderator has permission to PUT room updates (see pantry auth
+    // roomAuthenticator.canPut), so a joiner's own attempt to add themselves
+    // to speakers[] would be rejected (403) -- instead, the moderator
+    // auto-promotes every other connected peer (detected via peerState,
+    // which is announced over the signaling channel regardless of WebRTC/
+    // speaker status) to speaker, unless that peer already left the stage.
+    if (iAmModerator && stageOnly && hasRoom) {
+      for (let otherId of Object.keys(peerState)) {
+        if (otherId === myId) continue;
+        if (speakers.includes(otherId)) continue;
+        if (leftStagePeers.has(otherId)) continue;
+        if (moderatorAutoAdded.has(otherId)) continue;
+        moderatorAutoAdded.add(otherId);
+        addSpeaker({myIdentity}, roomId, otherId);
+      }
+    }
+
     // who else did leave stage? (announced by others via p2p state)
     let [isLeftStage, peerId, state] = useEvent(
       peerState,
@@ -54,7 +79,6 @@ export default function Speakers() {
       if (state.leftStage) {
         leftStagePeers.add(peerId);
         // if I'm moderator and someone else left stage, I remove him from speakers
-        let iAmModerator = room.moderators.includes(myId);
         if (iAmModerator && room.speakers.includes(peerId)) {
           removeSpeaker({myIdentity}, roomId, peerId);
         }
