@@ -145,7 +145,7 @@ export default function Navigation({
                 {handRaised ? (
                   <>Stop&nbsp;raising&nbsp;hand</>
                 ) : (
-                  <>✋🏽&nbsp;Raise&nbsp;hand&nbsp;to&nbsp;talk</>
+                  <>✋🏽&nbsp;Raise&nbsp;hand&nbsp;to&nbsp;get ON AIR</>
                 )}
               </>
             )}

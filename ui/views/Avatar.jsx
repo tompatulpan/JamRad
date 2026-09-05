@@ -36,9 +36,6 @@ export function StageAvatar({
         <div
           className={mqp('jam-badge relative w-20 h-20 md:w-28 md:h-28')}
           style={{
-            border: `3px solid ${
-              isSpeaking ? roomColors.buttonPrimary : roomColors.text
-            }`,
             boxShadow: isSpeaking
               ? `0 0 8px ${roomColors.buttonPrimary}`
               : 'none',
@@ -144,7 +141,6 @@ export function AudienceAvatar({
         <div
           className={mqp('jam-badge relative w-16 h-16 md:w-24 md:h-24')}
           style={{
-            border: `2px solid ${roomColors.text}`,
             backgroundColor: roomColors.background,
           }}
         >
