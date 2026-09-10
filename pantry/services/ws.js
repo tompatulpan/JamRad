@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 const querystring = require('querystring');
-const {get} = require('../services/redis');
+const {get, set} = require('../services/redis');
 const {ssrVerifyToken} = require('../ssr');
 
 module.exports = {
@@ -122,12 +122,20 @@ const PING_CHECK_INTERVAL = 5000;
 const PING_MAX_INTERVAL = 25000;
 
 function handleConnection(ws, req) {
-  let {roomId, peerId, subs} = req;
+  let {roomId, peerId, subs, roomInfo} = req;
   if (roomId === '~forward') {
     handleForwardingConnection(ws, req);
     return;
   }
   console.log('ws open', roomId, peerId, subs);
+
+  // JamRad: stageOnly rooms should put every joiner on stage by default.
+  // This used to rely on a moderator's own browser tab noticing the new
+  // peer and PUTting the updated speakers[] list -- if no moderator was
+  // connected at that moment, joiners got stuck in the audience forever.
+  // Doing it here (server-side, on ws connect) makes it work regardless of
+  // whether any moderator client is online.
+  autoAddSpeakerIfStageOnly(roomId, peerId?.split('.')[0], roomInfo);
   let lastPing = Date.now();
   let interval = setInterval(() => {
     let timeSincePing = Date.now() - lastPing;
@@ -203,6 +211,24 @@ function handleForwardingConnection(ws, req) {
   });
 }
 
+async function autoAddSpeakerIfStageOnly(roomId, publicKey, roomInfo) {
+  if (!roomInfo?.stageOnly || !publicKey) return;
+  let speakers = roomInfo.speakers || [];
+  if (speakers.includes(publicKey)) return;
+  try {
+    // re-read the room so we don't clobber concurrent updates with the
+    // (possibly stale) roomInfo captured at upgrade time
+    let room = (await get('rooms/' + roomId)) ?? roomInfo;
+    speakers = room.speakers || [];
+    if (speakers.includes(publicKey)) return;
+    let newRoom = {...room, speakers: [...speakers, publicKey]};
+    await set('rooms/' + roomId, newRoom);
+    broadcast(roomId, 'room-info', newRoom);
+  } catch (error) {
+    console.log('failed to auto-add speaker', roomId, publicKey, error);
+  }
+}
+
 function activeUserCount() {
   return nConnections;
 }
@@ -250,6 +276,7 @@ function addWebsocket(server) {
     }
     req.peerId = peerId;
     req.roomId = roomId;
+    req.roomInfo = roomInfo;
     req.subs = subs?.split(',').filter(t => t) ?? []; // custom encoding, don't use "," in topic names
 
     wss.handleUpgrade(req, socket, head, ws => {
