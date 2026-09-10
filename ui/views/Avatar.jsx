@@ -102,9 +102,17 @@ export function StageAvatar({
             style={{backgroundColor: roomColors.textLight}}
           >
             {!canSpeak ? (
-              <MicOffSvg className="w-5 h-5" fill="red" stroke={roomColors.text} />
+              <MicOffSvg
+                className="w-5 h-5"
+                fill="red"
+                stroke={roomColors.background}
+              />
             ) : (
-              <MicOnSvg className="w-5 h-5" stroke={roomColors.text} />
+              <MicOnSvg
+                className="w-5 h-5"
+                fill={roomColors.background}
+                stroke={roomColors.background}
+              />
             )}
           </div>
         )}
