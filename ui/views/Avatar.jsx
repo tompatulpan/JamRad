@@ -3,7 +3,7 @@ import {avatarUrl, displayName} from '../lib/avatar';
 import animateEmoji from '../lib/animate-emoji';
 import {useMqParser} from '../lib/tailwind-mqp';
 import {colors} from '../lib/theme';
-import {MicOffSvg} from './Svg';
+import {MicOffSvg, MicOnSvg} from './Svg';
 
 const reactionEmojis = ['❤️', '💯', '😂', '😅', '😳', '🤔'];
 
@@ -92,19 +92,20 @@ export function StageAvatar({
             {displayName(info, room).substring(0, 12)}
           </div>
         </div>
-        {/* div for showing mute/unmute status */}
-        {(!!micMuted || !canSpeak) && (
+        {/* div for showing mic status: only shown while transmitting (PTT pushed)
+            or when the mic has failed, not while simply muted/idle */}
+        {(!canSpeak || !micMuted) && (
           <div
             className={mqp(
               'absolute w-10 h-10 right-0 top-0 rounded-full bg-white border-2 text-2xl border-gray-400 flex items-center justify-center'
             )}
             style={{backgroundColor: roomColors.textLight}}
           >
-            <MicOffSvg
-              className="w-5 h-5"
-              fill={!canSpeak ? 'red' : undefined}
-              stroke={roomColors.text}
-            />
+            {!canSpeak ? (
+              <MicOffSvg className="w-5 h-5" fill="red" stroke={roomColors.text} />
+            ) : (
+              <MicOnSvg className="w-5 h-5" stroke={roomColors.text} />
+            )}
           </div>
         )}
         <TwitterHandle
