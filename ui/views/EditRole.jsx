@@ -201,7 +201,7 @@ export function EditSelf({onCancel}) {
               onCancel();
             }}
           >
-            {isRecording ? 'Stop Room Recording' : 'Start Room Recording'}
+            {isRecording ? 'Stop Channel Recording' : 'Start Channel Recording'}
           </SecondaryButton>
         )}
         {iModerate && (

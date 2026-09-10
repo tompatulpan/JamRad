@@ -52,7 +52,7 @@ export default function EnterRoom({
             }
           >
             <span className="text-gray-900 bg-yellow-200">Warning:</span> You
-            already joined this room from a different device or browser tab.
+            already joined this channel from a different device or browser tab.
             Click {`'`}
             Join{`'`} to switch to this tab.
           </div>
@@ -65,7 +65,7 @@ export default function EnterRoom({
           >
             <span className="text-gray-900 bg-yellow-200">Warning:</span>
             <br />
-            You are not allowed to enter this room. Move along!
+            You are not allowed to enter this channel. Move along!
           </div>
         )}
 
@@ -128,7 +128,7 @@ export default function EnterRoom({
               : 'hidden'
           }
           href={`/${roomId}.ics`}
-          download={`${name || 'room'}.ics`}
+          download={`${name || 'channel'}.ics`}
         >
           🗓 Add to Calendar
         </a>

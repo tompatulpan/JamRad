@@ -31,9 +31,9 @@ export default function StartFromURL({roomId, newRoom}) {
   return (
     <Container>
       <div className={mqp('p-2 pt-60 md:p-10 md:pt-60')}>
-        <h1>Start a new Room</h1>
+        <h1>Start a new Channel</h1>
         <p className="mb-6">
-          The room with ID{' '}
+          The channel with ID{' '}
           <code className="text-gray-900 bg-yellow-100">{roomId}</code> does not
           exist yet.
         </p>
@@ -58,7 +58,7 @@ export default function StartFromURL({roomId, newRoom}) {
           disabled={!userName.trim()}
           className="select-none h-12 px-6 text-lg text-black bg-gray-200 rounded-lg focus:shadow-outline active:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          🌱 Start room
+          🌱 Start channel
         </button>
 
         <div className={iOS ? 'mt-40 text-gray-500 text-center' : 'hidden'}>

@@ -79,7 +79,7 @@ export function EditRoomModal({roomId, room, close}) {
 
   return (
     <Modal close={close}>
-      <h1>Room Settings</h1>
+      <h1>Channel Settings</h1>
       <br />
       <div>
         <form onSubmit={submit}>
@@ -88,7 +88,7 @@ export function EditRoomModal({roomId, room, close}) {
               'rounded placeholder-gray-300 bg-gray-50 w-full md:w-96'
             )}
             type="text"
-            placeholder="Room topic"
+            placeholder="Channel topic"
             value={name}
             name="jam-room-topic"
             autoComplete="off"
@@ -106,7 +106,7 @@ export function EditRoomModal({roomId, room, close}) {
             className={mqp(
               'rounded -mb-1 placeholder-gray-300 bg-gray-50 w-full md:w-full'
             )}
-            placeholder="Room description"
+            placeholder="Channel description"
             value={description}
             name="jam-room-description"
             autoComplete="off"
@@ -116,7 +116,7 @@ export function EditRoomModal({roomId, room, close}) {
             }}
           ></textarea>
           <div className="p-2 text-gray-500 italic">
-            Describe what this room is about.{' '}
+            Describe what this channel is about.{' '}
             <span className="text-gray-400">
               (optional) (supports{' '}
               <a
@@ -188,7 +188,7 @@ export function EditRoomModal({roomId, room, close}) {
                 }}
               ></input>
               <div className="p-2 text-gray-500 italic">
-                Set primary color for your Room.{' '}
+                Set primary color for your Channel.{' '}
                 <span className="text-gray-400">(optional)</span>
               </div>
 
@@ -245,7 +245,7 @@ export function EditRoomModal({roomId, room, close}) {
                 }}
               ></input>
               <div className="p-2 text-gray-500 italic">
-                The URL used for sharing the room.
+                The URL used for sharing the channel.
                 <span className="text-gray-400">(optional)</span>
               </div>
 
@@ -264,9 +264,9 @@ export function EditRoomModal({roomId, room, close}) {
               />
 
               <label className="pl-3 ml-0.5" htmlFor="jam-room-closed">
-                Close the room (experimental){' '}
+                Close the channel (experimental){' '}
                 <div className="p-2 pl-9 text-gray-500">
-                  Closed rooms can only be joined by moderators.
+                  Closed channels can only be joined by moderators.
                   <br />
                   Everyone else sees the description and the&nbsp;
                   {`'call to action'`} button.
@@ -279,7 +279,7 @@ export function EditRoomModal({roomId, room, close}) {
               onClick={submit}
               className="flex-grow mt-5 h-12 px-6 text-lg text-white bg-gray-600 rounded-lg focus:shadow-outline active:bg-gray-600 mr-2"
             >
-              Update Room
+              Update Channel
             </button>
             <button
               onClick={close}
@@ -294,7 +294,7 @@ export function EditRoomModal({roomId, room, close}) {
         <br />
 
         <form>
-          <div className="pb-1">🗓 Room Schedule (experimental)</div>
+          <div className="pb-1">🗓 Channel Schedule (experimental)</div>
           <div className="pb-3 text-gray-500">
             Set the date and time for an upcoming event.
           </div>

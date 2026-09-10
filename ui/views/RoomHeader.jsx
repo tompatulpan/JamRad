@@ -23,7 +23,7 @@ export default function RoomHeader({
       {logoURI && (
         <div className="flex-none">
           <img
-            alt={'room icon'}
+            alt={'channel icon'}
             className="w-16 h-16 border rounded p-1 m-2 mt-0"
             src={logoURI}
             style={{objectFit: 'cover'}}

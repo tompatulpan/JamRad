@@ -70,7 +70,7 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
               : 'hidden'
           }
         >
-          The Room ID{' '}
+          The Channel ID{' '}
           <code className="text-gray-900 bg-yellow-200">{urlRoomId}</code> is
           not valid.
           <br />
@@ -80,16 +80,16 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
             rel="noreferrer"
             className="underline text-blue-800 active:text-blue-600"
           >
-            Learn more about Room IDs
+            Learn more about Channel IDs
           </a>
           <br />
           <br />
-          You can use the button below to start a new room.
+          You can use the button below to start a new channel.
         </div>
 
-        <h1>Start a new Room</h1>
+        <h1>Start a new Channel</h1>
 
-        <p>Click on the button below to start a new room.</p>
+        <p>Click on the button below to start a new channel.</p>
 
         <form className="pt-6" onSubmit={submit}>
           <input
@@ -111,7 +111,7 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
             <input
               className="rounded placeholder-gray-400 bg-gray-50 w-full md:w-96"
               type="text"
-              placeholder="Room topic"
+              placeholder="Channel topic"
               value={name}
               name="jam-room-topic"
               autoComplete="off"
@@ -126,7 +126,7 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
             <br />
             <textarea
               className="rounded placeholder-gray-400 bg-gray-50 w-full md:w-full"
-              placeholder="Room description"
+              placeholder="Channel description"
               value={description}
               name="jam-room-description"
               autoComplete="off"
@@ -136,7 +136,7 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
               }}
             ></textarea>
             <div className="p-2 text-gray-500 italic">
-              Describe what this room is about.{' '}
+              Describe what this channel is about.{' '}
               <span className="text-gray-400">
                 (optional) (supports{' '}
                 <a
@@ -201,7 +201,7 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
               }}
             ></input>
             <div className="p-2 text-gray-500 italic">
-              Set primary color for your Room.{' '}
+              Set primary color for your Channel.{' '}
               <span className="text-gray-400">(optional)</span>
             </div>
 
@@ -246,14 +246,14 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
             className="select-none h-12 px-6 text-lg text-black rounded-lg focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
             style={{backgroundColor: roomColors.buttonSecondary}}
           >
-            🌱 Start room
+            🌱 Start channel
           </button>
         </form>
 
         {recentRooms.length > 0 && (
           <div className="pt-10">
-            <h1>Recent Rooms</h1>
-            <p>Reconnect to a room you visited recently.</p>
+            <h1>Recent Channels</h1>
+            <p>Reconnect to a channel you visited recently.</p>
             <ul className="pt-4">
               {recentRooms.map(({roomId, name}) => (
                 <li key={roomId} className="pb-2">
