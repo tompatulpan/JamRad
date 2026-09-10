@@ -7,6 +7,7 @@ import Container from './Container';
 import {useJam} from '../jam-core-react';
 import {colors} from '../lib/theme';
 import {staticConfig} from '../jam-core/config';
+import {getRecentRooms} from '../lib/recent-rooms';
 
 export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
   const [state, {enterRoom, setProps, createRoom, updateInfo}] = useJam();
@@ -55,6 +56,9 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
     return humins.sort(() => Math.random() - 0.5);
   }, []);
 
+  // read once on mount; Room.jsx keeps this list updated as rooms are joined
+  let recentRooms = useMemo(() => getRecentRooms(), []);
+
   const roomColors = colors(newRoom);
   return (
     <Container style={{height: 'initial', minHeight: '100%'}}>
@@ -80,12 +84,12 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
           </a>
           <br />
           <br />
-          You can use the button below to start a room.
+          You can use the button below to start a new room.
         </div>
 
-        <h1>Start a Room</h1>
+        <h1>Start a new Room</h1>
 
-        <p>Click on the button below to start a room.</p>
+        <p>Click on the button below to start a new room.</p>
 
         <form className="pt-6" onSubmit={submit}>
           <input
@@ -245,6 +249,30 @@ export default function Start({newRoom = {}, urlRoomId, roomFromURIError}) {
             🌱 Start room
           </button>
         </form>
+
+        {recentRooms.length > 0 && (
+          <div className="pt-10">
+            <h1>Recent Rooms</h1>
+            <p>Reconnect to a room you visited recently.</p>
+            <ul className="pt-4">
+              {recentRooms.map(({roomId, name}) => (
+                <li key={roomId} className="pb-2">
+                  <a
+                    className="underline"
+                    style={{color: roomColors.link}}
+                    href={`/${roomId}`}
+                    onClick={e => {
+                      e.preventDefault();
+                      navigate('/' + roomId);
+                    }}
+                  >
+                    {name || roomId}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <hr className="mt-14 mb-14" />
 

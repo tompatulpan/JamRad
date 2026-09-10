@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {use} from 'use-minimal-state';
 import EnterRoom from './EnterRoom';
 import RoomHeader from './RoomHeader';
@@ -14,6 +14,7 @@ import {colors} from '../lib/theme.js';
 import {usePushToTalk, useCtrlCombos} from '../lib/hotkeys';
 import {useJam} from '../jam-core-react';
 import Panel from './Panel';
+import {addRecentRoom} from '../lib/recent-rooms';
 
 const inWebView =
   userAgent.browser?.name !== 'JamWebView' &&
@@ -60,6 +61,13 @@ export default function Room({room, roomId, uxConfig}) {
 
   let myInfo = myIdentity.info;
   let hasEnteredRoom = inRoom === roomId;
+
+  // remember rooms actually joined so we can offer them for reconnecting later
+  useEffect(() => {
+    if (hasEnteredRoom) {
+      addRecentRoom(roomId, {name: room?.name, color: room?.color});
+    }
+  }, [hasEnteredRoom, roomId, room?.name, room?.color]);
 
   let [editRole, setEditRole] = useState(null);
   let [editSelf, setEditSelf] = useState(false);

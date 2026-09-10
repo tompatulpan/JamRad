@@ -2,7 +2,7 @@
 
 # JamRad
 
-📻 JamRad is a ham-radio-themed fork of [Jam](https://github.com/jam-systems/jam), an open source alternative to Clubhouse, Twitter Spaces and similar audio spaces.
+📻 JamRad is a ham-radio-themed fork of [Jam](https://github.com/jam-systems/jam).
 
 With JamRad you can create audio rooms that can be used for discussions, hamradio sessions, free flowing conversations and more. JamRad reskins this into a ham radio operating console, with a Push-To-Talk console, an radio-style theme, and ham radio terminology.
 

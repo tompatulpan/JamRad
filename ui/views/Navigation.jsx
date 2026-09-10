@@ -8,6 +8,7 @@ import {InfoModal} from './InfoModal';
 import {MicOffSvg, MicOnSvg} from './Svg';
 import {useJam} from '../jam-core-react';
 import Panel from './Panel';
+import {navigate} from '../lib/use-location';
 
 const reactionEmojis = ['❤️', '💯', '😂', '😅', '😳', '🤔'];
 
@@ -221,7 +222,12 @@ export default function Navigation({
         {!noLeave && (
           <button
             className="flex-shrink ml-3 select-none h-12 px-6 text-lg text-black rounded-lg focus:shadow-outline"
-            onClick={() => leaveRoom(roomId)}
+            onClick={() => {
+              leaveRoom(roomId);
+              // land on the start screen so the user can create a new room or
+              // reconnect to a recent one, instead of the room's join screen
+              navigate('/');
+            }}
             style={{backgroundColor: roomColors.buttonSecondary}}
           >
             Leave
