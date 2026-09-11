@@ -166,8 +166,10 @@ function handleConnection(ws, req) {
     let msg = parseMessage(jsonMsg);
     // console.log('ws message', msg);
     if (msg !== undefined) {
-      if (msg.t === 'ping') lastPing = Date.now();
-      else handleMessage(connection, roomId, msg);
+      if (msg.t === 'ping') {
+        lastPing = Date.now();
+        sendMessage(connection, {t: 'pong'});
+      } else handleMessage(connection, roomId, msg);
     }
   });
 

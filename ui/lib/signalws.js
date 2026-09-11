@@ -2,6 +2,9 @@ import {encode} from './identity-utils';
 import {clear, emit, is, on, until} from 'minimal-state';
 
 const PING_INTERVAL = 5000;
+// server should pong every ping; if we miss several in a row the socket is
+// likely half-dead (e.g. after a network switch) and should be recreated
+const PONG_TIMEOUT = 3 * PING_INTERVAL;
 
 export default async function signalws({
   url,
@@ -24,10 +27,17 @@ export default async function signalws({
   url += `${roomId}?id=${myPeerId}.${myConnId}&token=${token}&subs=${subs}`;
 
   let ws = new WebSocket(url);
+  let lastPong = Date.now();
 
   ws.addEventListener('open', () => {
     is(hub, 'opened', true);
+    lastPong = Date.now();
     hub.interval = setInterval(() => {
+      if (Date.now() - lastPong > PONG_TIMEOUT) {
+        if (window.DEBUG) console.log('ws unresponsive, closing');
+        close(hub, 4000);
+        return;
+      }
       send(hub, {t: 'ping'});
     }, PING_INTERVAL);
   });
@@ -35,6 +45,10 @@ export default async function signalws({
     let msg = parse(data);
     if (msg === undefined) return;
     let {t: topic, d, p, r: requestId} = msg;
+    if (topic === 'pong') {
+      lastPong = Date.now();
+      return;
+    }
     if (window.DEBUG && d?.peerId !== myPeerId) {
       console.log('ws message', data);
     }
@@ -88,8 +102,8 @@ export default async function signalws({
     sendRequest(topic, message = {}) {
       return sendRequest(hub, topic, message);
     },
-    close() {
-      close(hub);
+    close(code) {
+      close(hub, code);
     },
   };
   return hub;
@@ -172,6 +186,7 @@ function newRequest(timeout = REQUEST_TIMEOUT) {
       resolve(data);
     };
     request.timeout = setTimeout(() => {
+      requests.delete(requestId);
       reject(new Error('request timeout'));
     }, timeout);
   });

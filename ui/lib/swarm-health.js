@@ -1,4 +1,4 @@
-export {checkWsHealth};
+export {checkWsHealth, watchOnlineEvents};
 
 // connection states
 export const INITIAL = 0;
@@ -8,12 +8,6 @@ export const DISCONNECTED = 3;
 
 function checkWsHealth(swarm) {
   setInterval(() => {
-    // console.log(
-    //   'checking ws health',
-    //   swarm.connectState,
-    //   swarm.hub?.ws?.readyState,
-    //   navigator.onLine
-    // );
     if (swarm.connectState === INITIAL || swarm.connectState === CONNECTING)
       return;
     if (!navigator.onLine) return;
@@ -27,22 +21,21 @@ function checkWsHealth(swarm) {
   }, 1000);
 }
 
-// const online = [navigator.onLine];
-// window.addEventListener('online', () => is(online, true));
-// window.addEventListener('offline', () => is(online, false));
+// react immediately to network / tab changes instead of waiting on ws timeouts,
+// which is what makes reconnecting after switching networks slow
+function watchOnlineEvents(swarm) {
+  let forceRecheck = () => {
+    if (swarm.connectState !== CONNECTED && swarm.connectState !== CONNECTING)
+      return;
+    // the existing socket may be stale (e.g. after switching networks) even
+    // though its readyState still reports OPEN; closing it makes checkWsHealth
+    // reconnect right away instead of waiting for the ping/pong timeout
+    swarm.hub?.close(4001);
+  };
+  window.addEventListener('online', forceRecheck);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') forceRecheck();
+  });
+  window.addEventListener('pageshow', forceRecheck);
+}
 
-// function watchOnlineEvents(swarm) {
-//   on(online, onl => {
-//     log('online', onl);
-//     switch (swarm.connectState) {
-//       case DISCONNECTED:
-//         if (onl) swarm.connect();
-//         break;
-//       case CONNECTING:
-//       case CONNECTED:
-//         if (!onl) disconnectUnwanted(swarm);
-//         break;
-//       default:
-//     }
-//   });
-// }

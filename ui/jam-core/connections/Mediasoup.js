@@ -69,13 +69,23 @@ export default function Mediasoup({swarm}) {
           connectedRoomId = roomId;
           mediasoupState = LOADING;
           (async () => {
-            if (!mediasoupDevice.loaded) {
-              await mediasoupDevice.load({routerRtpCapabilities});
+            try {
+              if (!mediasoupDevice.loaded) {
+                await mediasoupDevice.load({routerRtpCapabilities});
+              }
+              canSendAudio = mediasoupDevice.canProduce('audio');
+              canSendVideo = mediasoupDevice.canProduce('video');
+              if (!canSendAudio) console.warn('Mediasoup: cannot send audio');
+              if (!canSendVideo) console.warn('Mediasoup: cannot send video');
+            } catch (err) {
+              console.error('mediasoup: failed to load device', err);
+              // bail out of LOADING so the next render can retry from INITIAL
+              mediasoupState = INITIAL;
+              if (hub === swarm.hub) update();
+              return;
             }
-            canSendAudio = mediasoupDevice.canProduce('audio');
-            canSendVideo = mediasoupDevice.canProduce('video');
-            if (!canSendAudio) console.warn('Mediasoup: cannot send audio');
-            if (!canSendVideo) console.warn('Mediasoup: cannot send video');
+            // hub may have been replaced (e.g. reconnect) while we were loading
+            if (hub !== swarm.hub) return;
 
             let canSend = canSendAudio || canSendVideo;
 
@@ -171,19 +181,27 @@ export default function Mediasoup({swarm}) {
 
   async function initializeSending(hub) {
     sendState = LOADING;
-    const {
-      id,
-      iceParameters,
-      iceCandidates,
-      dtlsParameters,
-    } = await hub.sendRequest('mediasoup', {
-      type: 'createWebRtcTransport',
-      data: {
-        producing: true,
-        consuming: false,
-        rtpCapabilities: mediasoupDevice.rtpCapabilities,
-      },
-    });
+    let id, iceParameters, iceCandidates, dtlsParameters;
+    try {
+      ({id, iceParameters, iceCandidates, dtlsParameters} =
+        await hub.sendRequest('mediasoup', {
+          type: 'createWebRtcTransport',
+          data: {
+            producing: true,
+            consuming: false,
+            rtpCapabilities: mediasoupDevice.rtpCapabilities,
+          },
+        }));
+    } catch (err) {
+      console.error('mediasoup: failed to create send transport', err);
+      if (hub === swarm.hub && sendState === LOADING) {
+        sendState = INITIAL;
+        update();
+      }
+      return;
+    }
+    // hub may have been replaced (e.g. reconnect) while awaiting the request
+    if (hub !== swarm.hub) return;
 
     sendTransport = mediasoupDevice.createSendTransport({
       id,
@@ -193,6 +211,18 @@ export default function Mediasoup({swarm}) {
       iceServers: [],
     });
     sendState = READY;
+
+    sendTransport.on('connectionstatechange', state => {
+      if (state === 'failed' && sendTransport && !sendTransport.closed) {
+        log('mediasoup: send transport failed, rebuilding');
+        sendTransport.close();
+        sendTransport = null;
+        sendState = INITIAL;
+        sendingAudioStream = null;
+        sendingVideoStream = null;
+        update();
+      }
+    });
 
     sendTransport.on('connect', ({dtlsParameters}, callback, errback) => {
       hub
@@ -231,20 +261,27 @@ export default function Mediasoup({swarm}) {
 
   async function initializeReceiving(hub) {
     receiveState = LOADING;
-    const {
-      id,
-      iceParameters,
-      iceCandidates,
-      dtlsParameters,
-      sctpParameters,
-    } = await hub.sendRequest('mediasoup', {
-      type: 'createWebRtcTransport',
-      data: {
-        producing: false,
-        consuming: true,
-        rtpCapabilities: mediasoupDevice.rtpCapabilities,
-      },
-    });
+    let id, iceParameters, iceCandidates, dtlsParameters, sctpParameters;
+    try {
+      ({id, iceParameters, iceCandidates, dtlsParameters, sctpParameters} =
+        await hub.sendRequest('mediasoup', {
+          type: 'createWebRtcTransport',
+          data: {
+            producing: false,
+            consuming: true,
+            rtpCapabilities: mediasoupDevice.rtpCapabilities,
+          },
+        }));
+    } catch (err) {
+      console.error('mediasoup: failed to create receive transport', err);
+      if (hub === swarm.hub && receiveState === LOADING) {
+        receiveState = INITIAL;
+        update();
+      }
+      return;
+    }
+    // hub may have been replaced (e.g. reconnect) while awaiting the request
+    if (hub !== swarm.hub) return;
 
     receiveTransport = mediasoupDevice.createRecvTransport({
       id,
@@ -255,6 +292,14 @@ export default function Mediasoup({swarm}) {
       iceServers: [],
     });
     receiveState = READY;
+
+    receiveTransport.on('connectionstatechange', state => {
+      if (state === 'failed' && receiveTransport && !receiveTransport.closed) {
+        log('mediasoup: receive transport failed, rebuilding');
+        stopReceiving();
+        update();
+      }
+    });
 
     receiveTransport.on('connect', ({dtlsParameters}, callback, errback) => {
       hub
@@ -270,6 +315,7 @@ export default function Mediasoup({swarm}) {
     });
     update();
   }
+
 
   function stopReceiving() {
     receiveState = INITIAL;

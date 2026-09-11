@@ -2,6 +2,7 @@ import {emit, on, is, clear, update} from 'minimal-state';
 import signalws from './signalws';
 import {
   checkWsHealth,
+  watchOnlineEvents,
   INITIAL,
   CONNECTED,
   CONNECTING,
@@ -94,6 +95,7 @@ function Swarm(initialConfig) {
   // });
 
   checkWsHealth(swarm);
+  watchOnlineEvents(swarm);
 
   on(swarm.serverEvent, 'new-consumer', data => {
     log('got new consumer', data);
